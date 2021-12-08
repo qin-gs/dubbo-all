@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <dubbo:application name="comsumer" owner="qgs"/>
+
+    <dubbo:registry address="zookeeper://localhost:2181" check="false"/>
+
+    <!-- 如果没有注册中心，采用点对点的方式，需要配置在服务调暴露的url-->
+    <!--<dubbo:reference id="providerService"-->
+    <!--                 interface="com.example.service.ProviderService"-->
+    <!--                 url="dubbo://192.168.56.1:20880/com.example.service.ProviderService" />-->
+
+    <!-- 有注册中心-->
+    <dubbo:reference cluster="failover"
+                     retries="2"
+                     check="false"
+                     id="providerService"
+                     interface="com.example.service.ProviderService"/>
+</beans>
