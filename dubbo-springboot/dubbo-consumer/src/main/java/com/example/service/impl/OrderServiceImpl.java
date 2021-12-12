@@ -4,6 +4,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.example.bean.UserAddress;
 import com.example.service.OrderService;
 import com.example.service.UserService;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,15 +19,25 @@ import java.util.List;
 @Service
 public class OrderServiceImpl implements OrderService {
 
-    @Reference
+    /**
+     * 负载均衡算法
+     */
+    @Reference(loadbalance = "random")
     UserService userService;
 
+    /**
+     * 调用出错后，调用指定的方法
+     */
+    @HystrixCommand(fallbackMethod = "error")
     @Override
     public List<UserAddress> initOrder(String userId) {
         return userService.getUserAddressList(userId);
     }
 
-    public List<UserAddress> hello(String userId) {
+    /**
+     * 调用出错之后，调用该方法
+     */
+    public List<UserAddress> error(String userId) {
         return List.of(new UserAddress(10, "测试地址", "1", "测试", "测试", "Y"));
     }
 
